@@ -1,0 +1,345 @@
+{
+  "x402Version": 1,
+  "name": "x402-print-mail",
+  "description": "Agents send physical letters and postcards via Lob's test environment — preview PDF returned in-response",
+  "homepage": "https://nirholas.github.io/x402-print-mail/",
+  "repository": "https://github.com/nirholas/x402-print-mail",
+  "contact": "nichxbt@gmail.com",
+  "documentation": "https://nirholas.github.io/x402-print-mail/api",
+  "skill": "https://github.com/nirholas/x402-print-mail/blob/main/skill.md",
+  "openapi": "https://github.com/nirholas/x402-print-mail/blob/main/openapi.json",
+  "resources": [
+    {
+      "resource": "POST /letters",
+      "description": "Send a physical letter and get the printed proof back in the response.",
+      "price": "$0.05",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "base-sepolia",
+          "asset": "USDC",
+          "assetAddress": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+          "payTo": "0x40252CFDF8B20Ed757D61ff157719F33Ec332402",
+          "maxAmountRequired": "50000"
+        },
+        {
+          "scheme": "exact",
+          "network": "solana",
+          "asset": "USDC",
+          "assetAddress": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+          "payTo": "WwwuGbqHrwF5RG89KhUbmRWEvjnRH9k5kVM5p7T3WwW",
+          "maxAmountRequired": "50000",
+          "extra": {
+            "feePayer": "2wKupLR9q6wXYppw8Gr2NvWxKBUqm4PPJKkQfoxHDBg4",
+            "decimals": 6
+          }
+        }
+      ],
+      "network": "base-sepolia",
+      "asset": "USDC",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string"
+          },
+          "testMode": {
+            "type": "boolean"
+          },
+          "mailId": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "expectedDelivery": {
+            "type": "string"
+          },
+          "carrier": {
+            "type": "string"
+          },
+          "mailType": {
+            "type": "string"
+          },
+          "to": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "addressLine1": {
+                "type": "string"
+              },
+              "addressCity": {
+                "type": "string"
+              },
+              "addressState": {
+                "type": "string"
+              },
+              "addressZip": {
+                "type": "string"
+              },
+              "addressCountry": {
+                "type": "string"
+              }
+            }
+          },
+          "from": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "company": {
+                "type": "string"
+              },
+              "addressLine1": {
+                "type": "string"
+              },
+              "addressCity": {
+                "type": "string"
+              },
+              "addressState": {
+                "type": "string"
+              },
+              "addressZip": {
+                "type": "string"
+              },
+              "addressCountry": {
+                "type": "string"
+              }
+            }
+          },
+          "pageCount": {
+            "type": "integer"
+          },
+          "color": {
+            "type": "boolean"
+          },
+          "doubleSided": {
+            "type": "boolean"
+          },
+          "previewFormat": {
+            "type": "string"
+          },
+          "previewPdfBase64": {
+            "type": "string"
+          },
+          "previewUrl": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "thumbnails": {
+            "type": "array",
+            "items": {}
+          },
+          "payment": {
+            "type": "object",
+            "properties": {
+              "success": {
+                "type": "boolean"
+              },
+              "rail": {
+                "type": "string"
+              },
+              "network": {
+                "type": "string"
+              },
+              "transaction": {
+                "type": "string"
+              },
+              "payer": {
+                "type": "string"
+              },
+              "amount": {
+                "type": "string"
+              },
+              "asset": {
+                "type": "string"
+              },
+              "resource": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "resource": "POST /postcards",
+      "description": "Send a physical postcard and get the two-sided proof back in the response.",
+      "price": "$0.03",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "base-sepolia",
+          "asset": "USDC",
+          "assetAddress": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+          "payTo": "0x40252CFDF8B20Ed757D61ff157719F33Ec332402",
+          "maxAmountRequired": "30000"
+        },
+        {
+          "scheme": "exact",
+          "network": "solana",
+          "asset": "USDC",
+          "assetAddress": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+          "payTo": "WwwuGbqHrwF5RG89KhUbmRWEvjnRH9k5kVM5p7T3WwW",
+          "maxAmountRequired": "30000",
+          "extra": {
+            "feePayer": "2wKupLR9q6wXYppw8Gr2NvWxKBUqm4PPJKkQfoxHDBg4",
+            "decimals": 6
+          }
+        }
+      ],
+      "network": "base-sepolia",
+      "asset": "USDC",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string"
+          },
+          "testMode": {
+            "type": "boolean"
+          },
+          "mailId": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "expectedDelivery": {
+            "type": "string"
+          },
+          "carrier": {
+            "type": "string"
+          },
+          "mailType": {
+            "type": "string"
+          },
+          "to": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "addressLine1": {
+                "type": "string"
+              },
+              "addressCity": {
+                "type": "string"
+              },
+              "addressState": {
+                "type": "string"
+              },
+              "addressZip": {
+                "type": "string"
+              },
+              "addressCountry": {
+                "type": "string"
+              }
+            }
+          },
+          "from": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "company": {
+                "type": "string"
+              },
+              "addressLine1": {
+                "type": "string"
+              },
+              "addressCity": {
+                "type": "string"
+              },
+              "addressState": {
+                "type": "string"
+              },
+              "addressZip": {
+                "type": "string"
+              },
+              "addressCountry": {
+                "type": "string"
+              }
+            }
+          },
+          "pageCount": {
+            "type": "integer"
+          },
+          "color": {
+            "type": "boolean"
+          },
+          "doubleSided": {
+            "type": "boolean"
+          },
+          "previewFormat": {
+            "type": "string"
+          },
+          "previewPdfBase64": {
+            "type": "string"
+          },
+          "previewUrl": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "thumbnails": {
+            "type": "array",
+            "items": {}
+          },
+          "payment": {
+            "type": "object",
+            "properties": {
+              "success": {
+                "type": "boolean"
+              },
+              "rail": {
+                "type": "string"
+              },
+              "network": {
+                "type": "string"
+              },
+              "transaction": {
+                "type": "string"
+              },
+              "payer": {
+                "type": "string"
+              },
+              "amount": {
+                "type": "string"
+              },
+              "asset": {
+                "type": "string"
+              },
+              "resource": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "free": [
+    {
+      "resource": "GET /health",
+      "description": "Liveness, active data source, and configured payment rails"
+    },
+    {
+      "resource": "GET /.well-known/x402",
+      "description": "This manifest"
+    }
+  ]
+}

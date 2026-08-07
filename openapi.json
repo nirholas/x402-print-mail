@@ -1,0 +1,889 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "x402-print-mail",
+    "version": "0.1.0",
+    "description": "Agents send physical letters and postcards via Lob's test environment — preview PDF returned in-response\n\nEvery paid route returns the purchased artifact in the 200 response body. Pay in USDC on Base or Solana — your client picks the rail.",
+    "license": {
+      "name": "Apache-2.0",
+      "identifier": "Apache-2.0"
+    },
+    "contact": {
+      "name": "nirholas",
+      "email": "nichxbt@gmail.com",
+      "url": "https://github.com/nirholas/x402-print-mail"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:4024",
+      "description": "Local development"
+    },
+    {
+      "url": "https://your-deployment.example.com",
+      "description": "Your deployment"
+    }
+  ],
+  "tags": [
+    {
+      "name": "paid",
+      "description": "x402-paid routes. An unpaid request answers 402 with both rails."
+    },
+    {
+      "name": "free",
+      "description": "Free routes. No payment required."
+    }
+  ],
+  "paths": {
+    "/letters": {
+      "post": {
+        "operationId": "sendLetter",
+        "summary": "Send a physical letter and get the printed proof back in the response.",
+        "description": "Typesets plain-text `body` copy on US Letter with the recipient block positioned for a #10 double-window envelope, paginates it, and returns the proof as base64 PDF. Also returns the mail id, the page count, the carrier and mail class, and the expected delivery date computed on USPS business-day transit.\n\n`color` defaults to `false` and `doubleSided` defaults to `true` (the cheaper, greener combination). `mailType` is `usps_first_class` (default, ~5 business days) or `usps_standard` (~8).\n\nPrice: **$0.05** in USDC — payable on Base (EVM) or Solana.",
+        "tags": [
+          "paid"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "to": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "addressLine1": {
+                        "type": "string"
+                      },
+                      "addressCity": {
+                        "type": "string"
+                      },
+                      "addressState": {
+                        "type": "string"
+                      },
+                      "addressZip": {
+                        "type": "string"
+                      },
+                      "addressCountry": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "from": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "company": {
+                        "type": "string"
+                      },
+                      "addressLine1": {
+                        "type": "string"
+                      },
+                      "addressCity": {
+                        "type": "string"
+                      },
+                      "addressState": {
+                        "type": "string"
+                      },
+                      "addressZip": {
+                        "type": "string"
+                      },
+                      "addressCountry": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "body": {
+                    "type": "string"
+                  },
+                  "color": {
+                    "type": "boolean"
+                  },
+                  "doubleSided": {
+                    "type": "boolean"
+                  },
+                  "mailType": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "to": {
+                  "name": "Dana Reyes",
+                  "addressLine1": "1600 Pennsylvania Ave NW",
+                  "addressCity": "Washington",
+                  "addressState": "DC",
+                  "addressZip": "20500",
+                  "addressCountry": "US"
+                },
+                "from": {
+                  "name": "Acme Robotics",
+                  "company": "Acme Robotics Inc",
+                  "addressLine1": "215 Clayton St",
+                  "addressCity": "San Francisco",
+                  "addressState": "CA",
+                  "addressZip": "94117",
+                  "addressCountry": "US"
+                },
+                "body": "Dear Dana,\n\nYour order #4417 shipped today and should arrive by the end of the week. The tracking number is on the enclosed slip.\n\nThank you for your business.\n\nSincerely,\nAcme Robotics",
+                "color": false,
+                "doubleSided": true,
+                "mailType": "usps_first_class"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "`{mailId, previewPdfBase64, expectedDelivery}` plus page count, carrier, mail class, and the addresses as printed",
+            "headers": {
+              "X-PAYMENT-RESPONSE": {
+                "description": "Base64 JSON settlement receipt (rail, network, transaction, payer).",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "source": {
+                      "type": "string"
+                    },
+                    "testMode": {
+                      "type": "boolean"
+                    },
+                    "mailId": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "expectedDelivery": {
+                      "type": "string"
+                    },
+                    "carrier": {
+                      "type": "string"
+                    },
+                    "mailType": {
+                      "type": "string"
+                    },
+                    "to": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "addressLine1": {
+                          "type": "string"
+                        },
+                        "addressCity": {
+                          "type": "string"
+                        },
+                        "addressState": {
+                          "type": "string"
+                        },
+                        "addressZip": {
+                          "type": "string"
+                        },
+                        "addressCountry": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "from": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "company": {
+                          "type": "string"
+                        },
+                        "addressLine1": {
+                          "type": "string"
+                        },
+                        "addressCity": {
+                          "type": "string"
+                        },
+                        "addressState": {
+                          "type": "string"
+                        },
+                        "addressZip": {
+                          "type": "string"
+                        },
+                        "addressCountry": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "pageCount": {
+                      "type": "integer"
+                    },
+                    "color": {
+                      "type": "boolean"
+                    },
+                    "doubleSided": {
+                      "type": "boolean"
+                    },
+                    "previewFormat": {
+                      "type": "string"
+                    },
+                    "previewPdfBase64": {
+                      "type": "string"
+                    },
+                    "previewUrl": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "thumbnails": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "payment": {
+                      "type": "object",
+                      "properties": {
+                        "success": {
+                          "type": "boolean"
+                        },
+                        "rail": {
+                          "type": "string"
+                        },
+                        "network": {
+                          "type": "string"
+                        },
+                        "transaction": {
+                          "type": "string"
+                        },
+                        "payer": {
+                          "type": "string"
+                        },
+                        "amount": {
+                          "type": "string"
+                        },
+                        "asset": {
+                          "type": "string"
+                        },
+                        "resource": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "source": "fixture",
+                  "testMode": true,
+                  "mailId": "ltr_fixture_c77578d069f3be73",
+                  "type": "letter",
+                  "createdAt": "2026-08-07T12:00:00.000Z",
+                  "expectedDelivery": "2026-08-17",
+                  "carrier": "USPS",
+                  "mailType": "usps_first_class",
+                  "to": {
+                    "name": "Dana Reyes",
+                    "addressLine1": "1600 Pennsylvania Ave NW",
+                    "addressCity": "Washington",
+                    "addressState": "DC",
+                    "addressZip": "20500",
+                    "addressCountry": "US"
+                  },
+                  "from": {
+                    "name": "Acme Robotics",
+                    "company": "Acme Robotics Inc",
+                    "addressLine1": "215 Clayton St",
+                    "addressCity": "San Francisco",
+                    "addressState": "CA",
+                    "addressZip": "94117",
+                    "addressCountry": "US"
+                  },
+                  "pageCount": 1,
+                  "color": false,
+                  "doubleSided": true,
+                  "previewFormat": "PDF",
+                  "previewPdfBase64": "JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4K…",
+                  "previewUrl": null,
+                  "thumbnails": [],
+                  "payment": {
+                    "success": true,
+                    "rail": "evm",
+                    "network": "base-sepolia",
+                    "transaction": "0x9c1f…",
+                    "payer": "0xA11ce…",
+                    "amount": "50000",
+                    "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "resource": "http://localhost:4024/letters"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "402": {
+            "$ref": "#/components/responses/PaymentRequired"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          }
+        }
+      }
+    },
+    "/postcards": {
+      "post": {
+        "operationId": "sendPostcard",
+        "summary": "Send a physical postcard and get the two-sided proof back in the response.",
+        "description": "Takes `front` and `back` copy (1,000 characters each) and returns a two-page proof: page 1 is the front, page 2 is the back with the message on the left and the recipient address block plus postage box on the right, exactly as it prints. `size` is `4x6` (default), `6x9` or `6x11`.\n\nPrice: **$0.03** in USDC — payable on Base (EVM) or Solana.",
+        "tags": [
+          "paid"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "to": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "addressLine1": {
+                        "type": "string"
+                      },
+                      "addressCity": {
+                        "type": "string"
+                      },
+                      "addressState": {
+                        "type": "string"
+                      },
+                      "addressZip": {
+                        "type": "string"
+                      },
+                      "addressCountry": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "from": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "company": {
+                        "type": "string"
+                      },
+                      "addressLine1": {
+                        "type": "string"
+                      },
+                      "addressCity": {
+                        "type": "string"
+                      },
+                      "addressState": {
+                        "type": "string"
+                      },
+                      "addressZip": {
+                        "type": "string"
+                      },
+                      "addressCountry": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "front": {
+                    "type": "string"
+                  },
+                  "back": {
+                    "type": "string"
+                  },
+                  "size": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "to": {
+                  "name": "Dana Reyes",
+                  "addressLine1": "1600 Pennsylvania Ave NW",
+                  "addressCity": "Washington",
+                  "addressState": "DC",
+                  "addressZip": "20500",
+                  "addressCountry": "US"
+                },
+                "from": {
+                  "name": "Acme Robotics",
+                  "company": "Acme Robotics Inc",
+                  "addressLine1": "215 Clayton St",
+                  "addressCity": "San Francisco",
+                  "addressState": "CA",
+                  "addressZip": "94117",
+                  "addressCountry": "US"
+                },
+                "front": "Your order shipped!",
+                "back": "Order #4417 is on its way. Track it at acme.example/4417.",
+                "size": "4x6"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "`{mailId, previewPdfBase64, expectedDelivery}` for a two-page proof: front artwork, then back with address block and postage box",
+            "headers": {
+              "X-PAYMENT-RESPONSE": {
+                "description": "Base64 JSON settlement receipt (rail, network, transaction, payer).",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "source": {
+                      "type": "string"
+                    },
+                    "testMode": {
+                      "type": "boolean"
+                    },
+                    "mailId": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "expectedDelivery": {
+                      "type": "string"
+                    },
+                    "carrier": {
+                      "type": "string"
+                    },
+                    "mailType": {
+                      "type": "string"
+                    },
+                    "to": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "addressLine1": {
+                          "type": "string"
+                        },
+                        "addressCity": {
+                          "type": "string"
+                        },
+                        "addressState": {
+                          "type": "string"
+                        },
+                        "addressZip": {
+                          "type": "string"
+                        },
+                        "addressCountry": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "from": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "company": {
+                          "type": "string"
+                        },
+                        "addressLine1": {
+                          "type": "string"
+                        },
+                        "addressCity": {
+                          "type": "string"
+                        },
+                        "addressState": {
+                          "type": "string"
+                        },
+                        "addressZip": {
+                          "type": "string"
+                        },
+                        "addressCountry": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "pageCount": {
+                      "type": "integer"
+                    },
+                    "color": {
+                      "type": "boolean"
+                    },
+                    "doubleSided": {
+                      "type": "boolean"
+                    },
+                    "previewFormat": {
+                      "type": "string"
+                    },
+                    "previewPdfBase64": {
+                      "type": "string"
+                    },
+                    "previewUrl": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "thumbnails": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "payment": {
+                      "type": "object",
+                      "properties": {
+                        "success": {
+                          "type": "boolean"
+                        },
+                        "rail": {
+                          "type": "string"
+                        },
+                        "network": {
+                          "type": "string"
+                        },
+                        "transaction": {
+                          "type": "string"
+                        },
+                        "payer": {
+                          "type": "string"
+                        },
+                        "amount": {
+                          "type": "string"
+                        },
+                        "asset": {
+                          "type": "string"
+                        },
+                        "resource": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "source": "fixture",
+                  "testMode": true,
+                  "mailId": "psc_fixture_bafec9d202eca43e",
+                  "type": "postcard",
+                  "createdAt": "2026-08-07T12:00:00.000Z",
+                  "expectedDelivery": "2026-08-17",
+                  "carrier": "USPS",
+                  "mailType": "usps_first_class",
+                  "to": {
+                    "name": "Dana Reyes",
+                    "addressLine1": "1600 Pennsylvania Ave NW",
+                    "addressCity": "Washington",
+                    "addressState": "DC",
+                    "addressZip": "20500",
+                    "addressCountry": "US"
+                  },
+                  "from": {
+                    "name": "Acme Robotics",
+                    "company": "Acme Robotics Inc",
+                    "addressLine1": "215 Clayton St",
+                    "addressCity": "San Francisco",
+                    "addressState": "CA",
+                    "addressZip": "94117",
+                    "addressCountry": "US"
+                  },
+                  "pageCount": 2,
+                  "color": true,
+                  "doubleSided": true,
+                  "previewFormat": "PDF",
+                  "previewPdfBase64": "JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4K…",
+                  "previewUrl": null,
+                  "thumbnails": [],
+                  "payment": {
+                    "success": true,
+                    "rail": "solana",
+                    "network": "solana",
+                    "transaction": "5xkQ…",
+                    "payer": "9wFh…",
+                    "amount": "30000",
+                    "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                    "resource": "http://localhost:4024/postcards"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "402": {
+            "$ref": "#/components/responses/PaymentRequired"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "health",
+        "summary": "Liveness probe (free)",
+        "description": "Free. Reports the active data source and the payment rails this instance advertises.",
+        "tags": [
+          "free"
+        ],
+        "responses": {
+          "200": {
+            "description": "Service status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "service": {
+                      "type": "string"
+                    },
+                    "source": {
+                      "type": "string"
+                    },
+                    "rails": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "rail": {
+                            "type": "string"
+                          },
+                          "network": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/.well-known/x402": {
+      "get": {
+        "operationId": "manifest",
+        "summary": "x402 discovery manifest (free)",
+        "description": "Free. Machine-readable description of every paid resource and both payment rails.",
+        "tags": [
+          "free"
+        ],
+        "responses": {
+          "200": {
+            "description": "Discovery manifest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PaymentRequirements": {
+        "type": "object",
+        "description": "One accepted way to pay, as defined by the x402 protocol.",
+        "required": [
+          "scheme",
+          "network",
+          "maxAmountRequired",
+          "resource",
+          "description",
+          "mimeType",
+          "payTo",
+          "maxTimeoutSeconds",
+          "asset"
+        ],
+        "properties": {
+          "scheme": {
+            "type": "string",
+            "enum": [
+              "exact"
+            ]
+          },
+          "network": {
+            "type": "string",
+            "enum": [
+              "base-sepolia",
+              "base",
+              "solana",
+              "solana-devnet"
+            ],
+            "description": "The settlement network. Both an EVM and a Solana entry are always offered."
+          },
+          "maxAmountRequired": {
+            "type": "string",
+            "description": "Price in USDC atomic units (6 decimals). $0.002 → \"2000\"."
+          },
+          "resource": {
+            "type": "string",
+            "format": "uri"
+          },
+          "description": {
+            "type": "string"
+          },
+          "mimeType": {
+            "type": "string"
+          },
+          "payTo": {
+            "type": "string",
+            "description": "EVM address or Solana base58 address."
+          },
+          "maxTimeoutSeconds": {
+            "type": "integer"
+          },
+          "asset": {
+            "type": "string",
+            "description": "USDC contract address (EVM) or SPL mint (Solana)."
+          },
+          "extra": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "PaymentRequiredResponse": {
+        "type": "object",
+        "required": [
+          "x402Version",
+          "accepts"
+        ],
+        "properties": {
+          "x402Version": {
+            "type": "integer",
+            "const": 1
+          },
+          "error": {
+            "type": "string"
+          },
+          "accepts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentRequirements"
+            }
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "responses": {
+      "PaymentRequired": {
+        "description": "Payment required. The body lists both rails — pay with USDC on Base or on Solana, then retry with an `X-PAYMENT` header.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PaymentRequiredResponse"
+            },
+            "example": {
+              "x402Version": 1,
+              "error": "X-PAYMENT header is required",
+              "accepts": [
+                {
+                  "scheme": "exact",
+                  "network": "base-sepolia",
+                  "maxAmountRequired": "50000",
+                  "resource": "http://localhost:4024/letters",
+                  "description": "Send a physical letter and get the printed proof back in the response.",
+                  "mimeType": "application/json",
+                  "payTo": "0x40252CFDF8B20Ed757D61ff157719F33Ec332402",
+                  "maxTimeoutSeconds": 60,
+                  "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                  "extra": {
+                    "name": "USDC",
+                    "version": "2"
+                  }
+                },
+                {
+                  "scheme": "exact",
+                  "network": "solana",
+                  "maxAmountRequired": "50000",
+                  "resource": "http://localhost:4024/letters",
+                  "description": "Send a physical letter and get the printed proof back in the response.",
+                  "mimeType": "application/json",
+                  "payTo": "WwwuGbqHrwF5RG89KhUbmRWEvjnRH9k5kVM5p7T3WwW",
+                  "maxTimeoutSeconds": 60,
+                  "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                  "extra": {
+                    "name": "USD Coin",
+                    "decimals": 6,
+                    "feePayer": "2wKupLR9q6wXYppw8Gr2NvWxKBUqm4PPJKkQfoxHDBg4",
+                    "amount": "50000"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "BadRequest": {
+        "description": "Malformed request parameters.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "UpstreamError": {
+        "description": "The upstream provider failed.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    }
+  }
+}
