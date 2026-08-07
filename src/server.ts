@@ -6,11 +6,13 @@ import express from "express";
 import {
   activeRails,
   mountSolanaCheckout,
+  normalizeRouteSpec,
   paymentReceipt,
   paywall,
   usingSuiteDefaultPayTo,
   type RoutePrices,
 } from "./payments.js";
+import { ROUTE_SCHEMAS } from "./schemas.js";
 import {
   activeSource,
   sendLetter,
@@ -24,9 +26,12 @@ import {
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC_DIR = path.resolve(__dirname, "..", "public");
 
+// Price + call schema per paid route. The schema half is generated from
+// openapi.json (`src/schemas.ts`) and republished inside the 402 challenge, so
+// an agent that has only ever seen a 402 still knows how to call the route.
 const PRICES: RoutePrices = {
-  "POST /letters": "$0.05",
-  "POST /postcards": "$0.03",
+  "POST /letters": { price: "$0.05", ...ROUTE_SCHEMAS["POST /letters"] },
+  "POST /postcards": { price: "$0.03", ...ROUTE_SCHEMAS["POST /postcards"] },
 };
 
 const app = express();
@@ -110,8 +115,8 @@ app.listen(port, () => {
     );
   }
   console.log("  paid routes:");
-  for (const [route, price] of Object.entries(PRICES)) {
-    console.log(`    ${route.padEnd(18)} ${price}`);
+  for (const [route, spec] of Object.entries(PRICES)) {
+    console.log(`    ${route.padEnd(18)} ${normalizeRouteSpec(spec).price}`);
   }
   console.log("  free routes: GET /health, GET /.well-known/x402");
 });
