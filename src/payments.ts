@@ -336,6 +336,10 @@ export function paywall(routePrices: RoutePrices, opts: PaywallOptions): Request
  *
  * EVM clients never need this — they sign EIP-3009 typed data locally.
  *
+ * This is a *checkout* helper, not a verification path: it only builds and wraps
+ * a transaction the buyer signs, and it can never move funds. Verification and
+ * settlement for BOTH rails go through the facilitator in `paywall()` above.
+ *
  * Provided by `@three-ws/x402-payment-modal/server/express`. If that package or
  * its optional `@solana/web3.js` peer is unavailable, the mount is skipped with a
  * log line and the Solana rail simply degrades to "bring your own transaction".
