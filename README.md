@@ -110,3 +110,7 @@ nichxbt@gmail.com
 Apache-2.0 — see [LICENSE](LICENSE).
 
 Part of the [x402 Suite](https://github.com/nirholas/x402-suite).
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=nirholas/x402-print-mail&type=Date)](https://www.star-history.com/#nirholas/x402-print-mail&Date)
