@@ -1,0 +1,22 @@
+{
+  "name": "x402-print-mail",
+  "owner": {
+    "name": "nirholas"
+  },
+  "description": "Run the x402-print-mail service and send letters and postcards through Lob, with a preview PDF in the response, paid per piece via x402.",
+  "plugins": [
+    {
+      "name": "x402-print-mail",
+      "source": "./plugins/x402-print-mail",
+      "description": "Run the x402-print-mail service and send letters and postcards through Lob, with a preview PDF in the response, paid per piece via x402.",
+      "category": "automation",
+      "tags": [
+        "x402",
+        "mail",
+        "lob",
+        "letters",
+        "postcards"
+      ]
+    }
+  ]
+}
